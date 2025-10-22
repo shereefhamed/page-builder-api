@@ -1,6 +1,5 @@
 <?php
 global $wpdb;
-//$table_name = $wpdb->prefix . 'page_builder_api_keys';
 $api_key= null;
 
 if (isset($_POST['generate_api_key'])) {

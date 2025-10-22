@@ -42,23 +42,26 @@ if(!class_exists('Simple_Page_Builder')){
             }
             global $wpdb;
             $start_time = microtime(true);
-            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-            $endpoint = '/pagebuilder/v1/create-pages';
-            $status = 'failed';
+            //$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            //$endpoint = '/pagebuilder/v1/create-pages';
+            //$status = 'failed';
 
-            $headers = $request->get_headers();
+            /* $headers = $request->get_headers();
             $provided_key = '';
 
-             if (!empty($headers['api_key'][0])) {
+            if (!empty($headers['api_key'][0])) {
                 $provided_key = trim($headers['api_key'][0]);
             } elseif ($request->get_param('api_key')) {
                 $provided_key = trim($request->get_param('api_key'));
-            }
+            } */
+
+            $provided_key = $this->get_api_key_from_request($request);
+            //echo $provided_key;
 
             $key_data = $this->page_builder_validate_api_key($provided_key);
 
             if (!$key_data) {
-                $wpdb->insert(
+                /* $wpdb->insert(
                     $this->logs_table, 
                     [
                         'api_key_preview' => substr($key_data->api_key, 0, 8) . '...',
@@ -67,7 +70,9 @@ if(!class_exists('Simple_Page_Builder')){
                         'ip_address' => $ip,
                         'response_time' => microtime(true) - $start_time,
                     ]
-                );
+                ); */
+                $response_time = microtime(true) - $start_time;
+                $this->log_request_activities(null, null, 'failed', $response_time);
                 
                 return new WP_Error(
                     'unauthorized',
@@ -79,7 +84,7 @@ if(!class_exists('Simple_Page_Builder')){
             $pages = $request->get_param('pages');
 
             if (empty($pages) || !is_array($pages)) {
-                 $wpdb->insert(
+                 /* $wpdb->insert(
                     $this->logs_table, 
                     [
                         'api_key_id' => $key_data->id,
@@ -89,7 +94,9 @@ if(!class_exists('Simple_Page_Builder')){
                         'ip_address' => $ip,
                         'response_time' => microtime(true) - $start_time,
                     ]
-                );
+                ); */
+                $response_time = microtime(true) - $start_time;
+                $this->log_request_activities($key_data->id,$key_data->api_key, 'failed',  $response_time);
                 return new WP_Error('invalid_input', 'Expected an array of pages', ['status' => 400]);
             }
 
@@ -149,7 +156,7 @@ if(!class_exists('Simple_Page_Builder')){
 
                 }
             }
-            $wpdb->insert(
+            /* $wpdb->insert(
                 $this->logs_table, 
                 [
                     'api_key_id' => $key_data->id,
@@ -160,7 +167,9 @@ if(!class_exists('Simple_Page_Builder')){
                     'response_time' => microtime(true) - $start_time,
                     'ip_address' => $ip,
                 ]
-            );
+            ); */
+            $response_time = microtime(true) - $start_time;
+            $this->log_request_activities($key_data->id, $key_data->api_key, 'success', $response_time, count($created));
 
             $payload = [
                 'event'        => 'pages_created',
@@ -271,6 +280,38 @@ if(!class_exists('Simple_Page_Builder')){
             );
 
             file_put_contents($log_file, $log_text, FILE_APPEND);
+        }
+
+        private function get_api_key_from_request($request){
+            $headers = $request->get_headers();
+            $provided_key = '';
+
+            if (!empty($headers['api_key'][0])) {
+                $provided_key = trim($headers['api_key'][0]);
+            } elseif ($request->get_param('api_key')) {
+                $provided_key = trim($request->get_param('api_key'));
+            }
+
+            return $provided_key;
+        }
+
+        private function log_request_activities($api_key_id, $api_key, $status, $response_time, $pages_created = 0){
+            global $wpdb;
+            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $endpoint = '/pagebuilder/v1/create-pages';
+
+            $wpdb->insert(
+                $this->logs_table, 
+                [
+                    'api_key_id' => $api_key_id,
+                    'api_key_preview' => substr($api_key, 0, 8) . '...',
+                    'endpoint' => $endpoint,
+                    'status' => $status,
+                    'ip_address' => $ip,
+                    'response_time' => $response_time,
+                    'pages_created' => $pages_created,
+                ]
+            );
         }
 
 
