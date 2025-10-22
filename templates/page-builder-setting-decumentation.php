@@ -3,7 +3,7 @@
     <p>Secure REST API to create pages in bulk. Authenticated by API keys generated in the WordPress admin. This doc describes endpoints, authentication, examples, and admin features (key management, logs, created pages).</p>
 
     <h2>Base URL</h2>
-    <p>Replace <code>{{SITE_URL}}</code> with your site root (for local dev use <code>http://localhost/page-builder</code>).</p>
+    <p>Replace <code>{{SITE_URL}}</code> with your site root (for local dev use <code>http://localhost/your-site</code>).</p>
     <pre><code>https://{{SITE_URL}}/wp-json/pagebuilder/v1</code></pre>
 
     <h2>Primary Endpoint</h2>
@@ -138,5 +138,46 @@
         </div>
     </div>
 
+    <div>
+        <h2>Full example: complete request + response (success)</h2>
+        <pre><code>Request:
+        POST https://{{SITE_URL}}/wp-json/pagebuilder/v1/create-pages
+        Header:
+        api-key: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+        Body:
+        {
+        "pages": [
+            { "title": "APIDemo 1", "content": "demo content" },
+            { "title": "APIDemo 2", "content": "demo content 2" }
+        ]
+        }
 
+        Response (200):
+        {
+        "success": true,
+        "created_count": 2,
+        "failed_count": 0,
+        "created_pages": [
+            {
+                "title": "APIDemo 1",
+                "page_id": 42,
+                "link": "https://{{SITE_URL}}/apidemo-1/"
+            },
+            {
+                "title": "APIDemo 2",
+                "page_id": 43,
+                "link": "https://{{SITE_URL}}/api-demo-2"
+            }
+        ],
+        "failed_pages": []
+        }</code></pre>
+
+        <h2>Full example: invalid key (error)</h2>
+        <pre><code>Response (401):
+        {
+        "code": "unauthorized",
+        "message": "Invalid or expired API key.",
+        "data": { "status": 401 }
+        }</code></pre>
+    </div>
 </div>
