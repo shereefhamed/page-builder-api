@@ -42,13 +42,9 @@ if(!class_exists('Simple_Page_Builder')){
             }
             global $wpdb;
             $start_time = microtime(true);
-            //$logs_table = $wpdb->prefix . 'page_builder_api_logs';
-            //$table_pages = $wpdb->prefix . CREATED_PAGES_TABLE;
-            //$keys_table = $wpdb->prefix . 'page_builder_api_keys';
             $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
             $endpoint = '/pagebuilder/v1/create-pages';
             $status = 'failed';
-            //$pages_created_count = 0;
 
             $headers = $request->get_headers();
             $provided_key = '';
@@ -282,7 +278,6 @@ if(!class_exists('Simple_Page_Builder')){
             if (empty($provided_key)) return false;
 
             global $wpdb;
-            //$table = $wpdb->prefix . 'page_builder_api_keys';
             $keys = $wpdb->get_results("SELECT * FROM {$this->api_keys_table} WHERE status = 'active'");
 
             foreach ($keys as $key) {

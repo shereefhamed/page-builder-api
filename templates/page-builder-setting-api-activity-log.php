@@ -1,34 +1,5 @@
 <?php
-/* if (isset($_GET['export']) && $_GET['export'] == 1) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'page_builder_api_logs';
-    $logs = $wpdb->get_results("SELECT * FROM $table_name ORDER BY timestamp DESC", ARRAY_A);
-
-    // Clean any output buffer
-    if (ob_get_length()) ob_end_clean();
-
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="api_logs.csv"');
-
-    $output = fopen('php://output', 'w');
-    fputcsv($output, ['Timestamp', 'API Key', 'Endpoint', 'Status', 'Pages Created', 'Response Time', 'IP Address']);
-
-    foreach ($logs as $log) {
-        fputcsv($output, [
-            $log['timestamp'],
-            $log['api_key_preview'],
-            $log['endpoint'],
-            $log['status'],
-            $log['pages_created'],
-            $log['response_time'],
-            $log['ip_address'],
-        ]);
-    }
-    fclose($output);
-    exit;
-} */ 
 global $wpdb;
-//$table_name = $wpdb->prefix . 'page_builder_api_logs';
 
 $status_filter = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $api_key_filter = isset($_GET['api_key']) ? sanitize_text_field($_GET['api_key']) : '';
@@ -57,7 +28,6 @@ $logs = $wpdb->get_results("SELECT * FROM {$this->logs_table} $where ORDER BY ti
         <label>From:</label> <input type="date" name="from" value="<?php echo esc_attr($date_from) ?>" />
         <label>To:</label> <input type="date" name="to" value="<?php echo esc_attr($date_to) ?>" />
         <input type="submit" class="button" value="Filter" />
-        <!-- <a href="<?php echo admin_url('tools.php?page=page_builder&tab=api-activity-log&export=1')?>" class="button">Export CSV</a> -->
         <a href="#" class="button" id="export">Export CSV</a>
     </form>
     <table class="widefat fixed striped dataTable">

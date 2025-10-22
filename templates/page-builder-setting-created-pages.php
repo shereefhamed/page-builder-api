@@ -1,6 +1,5 @@
 <?php
 global $wpdb;
-//$table_name = $wpdb->prefix . CREATED_PAGES_TABLE;
 
 // Filters
 $api_key_filter = isset($_GET['api_key']) ? sanitize_text_field($_GET['api_key']) : '';
@@ -30,7 +29,6 @@ $pages = $wpdb->get_results("SELECT * FROM {$this->pages_table} $where ORDER BY 
         <input type="date" name="to" value="<?php echo esc_attr($date_to); ?>" />
 
         <input type="submit" class="button" value="Filter" />
-        <!-- <a href="<?php echo admin_url('tools.php?page=page_builder&tab=created-pages&export=1'); ?>" class="button">Export CSV</a> -->
         <a href="#" class="button" id="export">Export CSV</a>
     </form>
 

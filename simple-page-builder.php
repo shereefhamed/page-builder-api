@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 define('SIMPLE_PAGE_BUILDER_PATH', plugin_dir_path(__FILE__));
 define('SIMPLE_PAGE_BUILDER_URI', plugin_dir_url(__FILE__));
 define('SIMPLE_PAGE_BUILDER_VERSION', '1.0.0');
-//define('CREATED_PAGES_TABLE', 'page_builder_created_pages');
 
 require_once(SIMPLE_PAGE_BUILDER_PATH. 'includes/simple-page-builder.class.php');
 if(class_exists('Simple_Page_Builder')){
