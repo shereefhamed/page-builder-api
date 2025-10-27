@@ -358,8 +358,22 @@ if(!class_exists('Simple_Page_Builder')){
             dbDelta($sql3);
         }
 
-        static public function deactivate(){}
+        static public function deactivate(){
+            update_option('pagebuilder_api_enabled', false);
+        }
 
-        static public function uninstall(){}
+        static public function uninstall(){
+            global $wpdb;
+            
+            $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}page_builder_api_keys");
+            $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}page_builder_api_logs");
+            $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}page_builder_created_pages");
+
+            delete_option('pagebuilder_api_enabled');
+            delete_option('pagebuilder_default_expiration');
+            delete_option('pagebuilder_rate_limit');
+            delete_option('pagebuilder_webhook_url');
+            delete_option('pagebuilder_webhook_secret');
+        }
     }
 }
